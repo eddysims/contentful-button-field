@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Form, CheckboxField, TextField } from '@contentful/forma-36-react-components';
 import { FieldExtensionSDK } from '@contentful/app-sdk';
 
@@ -45,7 +45,7 @@ const Field = ({ sdk }: FieldProps) => {
         helpText="Is this a link to the Responsible AI website?"
         id="external"
         checked={newButton.external}
-        onChange={(e) => setNewButton({ ...newButton, external: e.target.checked })}
+        onChange={handleExternalChange}
       />
       <TextField
         id="url"
@@ -53,10 +53,30 @@ const Field = ({ sdk }: FieldProps) => {
         labelText="Button Url"
         helpText={urlHelpText}
         value={newButton.url}
-        onChange={(e) => setNewButton({ ...newButton, url: e.target.value })}
+        onChange={handleUrlChange}
       />
+      {JSON.stringify(button)}
     </Form>
   );
+
+  function handleExternalChange(event: ChangeEvent<HTMLInputElement>) {
+    const { checked } = event.target;
+
+    setNewButton({
+      ...newButton,
+      url: checked ? 'https://' : '/',
+      external: checked
+    })
+  }
+
+  function handleUrlChange(event: ChangeEvent<HTMLInputElement>) {
+    const { value } = event.target;
+    
+    setNewButton({ 
+      ...newButton, 
+      url: newButton.external ? value : value.toLocaleLowerCase().replace(' ', '-')
+    })
+  }
 };
 
 function updateFieldValue(sdk: FieldProps['sdk'], button: ButtonProps) {
