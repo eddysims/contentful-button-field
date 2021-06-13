@@ -21,13 +21,13 @@ const Field = ({ sdk }: FieldProps) => {
   });
 
   const urlHelpText = newButton.external ?
-  'External url should be a path to the full url you would like to link to. Example: "https://eddysims.com"' : 
-  'Internal urls should be only the slug of the page you would like to link to. Example "/a-page-to-link-to"';
+    'External url should be a path to the full url you would like to link to. Example: "https://eddysims.com"' :
+    'Internal urls should be only the slug of the page you would like to link to. Example "/a-page-to-link-to"';
 
   useEffect(() => { sdk.window.startAutoResizer(); })
 
   useEffect(() => {
-    updateFieldValue(sdk, newButton)
+    updateFieldValue(sdk, newButton);
   }, [newButton, sdk]);
 
 
@@ -38,14 +38,14 @@ const Field = ({ sdk }: FieldProps) => {
         name="title"
         labelText="Button Title"
         value={newButton.title}
-        onChange={(e) => setNewButton({...newButton, title: e.target.value})}
+        onChange={(e) => setNewButton({ ...newButton, title: e.target.value })}
       />
       <CheckboxField
         labelText="External Link"
         helpText="Is this a link to the Responsible AI website?"
         id="external"
         checked={newButton.external}
-        onChange={(e) => setNewButton({...newButton, external: e.target.checked})}
+        onChange={(e) => setNewButton({ ...newButton, external: e.target.checked })}
       />
       <TextField
         id="url"
@@ -53,14 +53,14 @@ const Field = ({ sdk }: FieldProps) => {
         labelText="Button Url"
         helpText={urlHelpText}
         value={newButton.url}
-        onChange={(e) => setNewButton({...newButton, url: e.target.value})}
+        onChange={(e) => setNewButton({ ...newButton, url: e.target.value })}
       />
     </Form>
   );
 };
 
 function updateFieldValue(sdk: FieldProps['sdk'], button: ButtonProps) {
-  sdk.field.setValue({button})
+  sdk.field.setValue({ button })
 }
 
 export default Field;
