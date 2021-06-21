@@ -13,7 +13,7 @@ interface ActionProps {
 }
 
 const Field = ({ sdk }: FieldProps) => {
-  const { action } = sdk.field.getValue();
+  const { action } = sdk.field.getValue() || {};
   const [newAction, setNewAction] = useState<ActionProps>({
     title: action?.title ?? "",
     url: action?.url ?? '',
