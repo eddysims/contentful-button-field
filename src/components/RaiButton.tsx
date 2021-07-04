@@ -78,7 +78,9 @@ export function RaiButton({ sdk }: RaiButtonProps) {
             onChange={handleChange}
             checked={newAction.external}
           />
+          <pre>{JSON.stringify(newAction, undefined, 2)}</pre>
         </Form>
+
       )}
     </Form>
   );
