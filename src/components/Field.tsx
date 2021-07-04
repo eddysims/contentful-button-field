@@ -1,85 +1,46 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Form, CheckboxField, TextField } from '@contentful/forma-36-react-components';
+import React, { useEffect } from 'react';
+import { Note, SectionHeading, Paragraph } from '@contentful/forma-36-react-components';
 import { FieldExtensionSDK } from '@contentful/app-sdk';
+import { RaiButton } from './RaiButton';
+import { RaiList } from './RaiList';
 
 interface FieldProps {
   sdk: FieldExtensionSDK;
 }
 
-interface ActionProps {
-  title: string;
-  url: string;
-  external: boolean;
-}
-
-const Field = ({ sdk }: FieldProps) => {
-  const { action } = sdk.field.getValue() || {};
-  const [newAction, setNewAction] = useState<ActionProps>({
-    title: action?.title ?? "",
-    url: action?.url ?? '',
-    external: action?.external ?? false
-  });
-
-  const urlHelpText = newAction.external ?
-    'External url should be a path to the full url you would like to link to. Example: "https://eddysims.com"' :
-    'Internal urls should be only the slug of the page you would like to link to. Example "/a-page-to-link-to"';
+function Field({ sdk }: FieldProps) {
+  // @ts-expect-error
+  const { raiFieldType } = sdk.parameters.instance ?? "";
 
   useEffect(() => { sdk.window.startAutoResizer(); })
 
-  useEffect(() => {
-    updateFieldValue(sdk, newAction);
-  }, [newAction, sdk]);
+  return renderField();
 
-
-  return (
-    <Form>
-      <TextField
-        id="title"
-        name="title"
-        labelText="Title"
-        value={newAction.title}
-        onChange={(e) => setNewAction({ ...newAction, title: e.target.value })}
-      />
-      <TextField
-        id="url"
-        name="url"
-        labelText="Url"
-        helpText={urlHelpText}
-        value={newAction.url}
-        onChange={handleUrlChange}
-      />
-      <CheckboxField
-        labelText="External link"
-        helpText="Is this a link to outside of the Responsible AI website?"
-        id="external"
-        checked={newAction.external}
-        onChange={handleExternalChange}
-      />
-    </Form>
-  );
-
-  function handleExternalChange(event: ChangeEvent<HTMLInputElement>) {
-    const { checked } = event.target;
-
-    setNewAction({
-      ...newAction,
-      url: checked ? 'https://' : '/',
-      external: checked
-    })
+  function renderField() {
+    switch (raiFieldType) {
+      case "button":
+        return <RaiButton sdk={sdk} />
+      case "list":
+        return <RaiList sdk={sdk} />
+      default:
+        return <UnknownFieldType type={raiFieldType} />
+    }
   }
-
-  function handleUrlChange(event: ChangeEvent<HTMLInputElement>) {
-    const { value } = event.target;
-
-    setNewAction({
-      ...newAction,
-      url: newAction.external ? value : value.toLocaleLowerCase().replace(' ', '-')
-    })
-  }
-};
-
-function updateFieldValue(sdk: FieldProps['sdk'], action: ActionProps) {
-  sdk.field.setValue({ action })
 }
 
-export default Field;
+interface UnknownFieldTypeProps {
+  type: string;
+}
+
+function UnknownFieldType({ type }: UnknownFieldTypeProps) {
+  return (
+    <Note noteType="warning">
+      <SectionHeading>Unknown Field Type</SectionHeading>
+      <Paragraph>
+        Unknown field type <strong>"{type}"</strong>. Please check your content modal.
+      </Paragraph>
+    </Note>
+  )
+}
+
+export default Field
